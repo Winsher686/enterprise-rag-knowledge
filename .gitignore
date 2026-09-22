@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -28,15 +28,15 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Project data
-data/
-output/
-uploads/
+# Project data (only root-level)
+/data/
+/output/
+/uploads/
 *.log
 *.tmp
 
-# Models / large files
-models/
+# Model weights (only root-level)
+/models/
 *.bin
 *.pt
 *.pth
