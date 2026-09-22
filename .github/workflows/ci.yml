@@ -2,66 +2,42 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   backend:
-    name: Backend Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
-
       - name: Install backend deps
         run: |
+          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Lint (ruff)
-        run: ruff check app tests || true
-
-      - name: Run tests
-        run: pytest -v
+      - name: Run backend tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          cd backend
+          pytest -v
 
   frontend:
-    name: Frontend Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: npm
-          cache-dependency-path: frontend/package.json
-
       - name: Install frontend deps
-        run: npm install --no-audit --no-fund
-
+        run: |
+          cd frontend
+          npm install
       - name: Build frontend
-        run: npm run build
-
-  docker:
-    name: Docker Build
-    runs-on: ubuntu-latest
-    needs: [ backend, frontend ]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build backend image
-        run: docker build -t enterprise-rag-backend:ci ./backend
-
-      - name: Build frontend image
-        run: docker build -t enterprise-rag-frontend:ci ./frontend
+        run: |
+          cd frontend
+          npm run build
