@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: enterprise-rag-backend:latest
+    container_name: enterprise-rag-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - LOG_LEVEL=INFO
+      - VECTOR_STORE=${VECTOR_STORE:-memory}
+      - EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER:-mock}
+      - LLM_PROVIDER=${LLM_PROVIDER:-mock}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - LLM_MODEL=${LLM_MODEL:-qwen3-32b}
+      - SESSION_PROVIDER=${SESSION_PROVIDER:-memory}
+      - USE_MULTI_RETRIEVER=${USE_MULTI_RETRIEVER:-false}
+      - RERANKER_PROVIDER=${RERANKER_PROVIDER:-noop}
+    volumes:
+      - ./data:/app/data
+    networks:
+      - rag-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: enterprise-rag-frontend:latest
+    container_name: enterprise-rag-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - rag-net
+
+networks:
+  rag-net:
+    driver: bridge

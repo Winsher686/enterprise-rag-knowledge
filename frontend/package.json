@@ -1,0 +1,24 @@
+{
+  "name": "enterprise-rag-knowledge-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "element-plus": "^2.7.0",
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.2",
+    "marked": "^12.0.2",
+    "highlight.js": "^11.9.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.11",
+    "@vitejs/plugin-vue": "^5.0.4"
+  }
+}

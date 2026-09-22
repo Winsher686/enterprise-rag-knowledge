@@ -1,0 +1,44 @@
+# 可选中间件，需要真实启用时执行：
+#   docker compose -f docker-compose.yml -f docker-compose.infra.yml up -d
+services:
+  chroma:
+    image: chromadb/chroma:0.5.5
+    container_name: enterprise-rag-chroma
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./data/chroma:/chroma/chroma
+    networks:
+      - rag-net
+
+  mongo:
+    image: mongo:7
+    container_name: enterprise-rag-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - rag-net
+
+  minio:
+    image: minio/minio:latest
+    container_name: enterprise-rag-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./data/minio:/data
+    networks:
+      - rag-net
+
+networks:
+  rag-net:
+    driver: bridge
